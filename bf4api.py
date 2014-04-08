@@ -44,5 +44,5 @@ class Bf4StatsApiClient(object):
 
 if __name__ == '__main__':
     client = Bf4StatsApiClient()
-    response_entity = client.search(sys.argv[1])
+    response_entity = client.search(sys.argv[1], sys.argv[2])
     print response_entity
