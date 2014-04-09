@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import sys
+#import sys
 import httplib2
 import json
-
-
+from pprint import pprint
 
 
 class Bf4StatsApiClient(object):
@@ -13,11 +12,19 @@ class Bf4StatsApiClient(object):
         # REST API のエンドポイント
         self._endpoint = "http://api.bf4stats.com/api/"
         # モード
-        self._mode = {"onlinePlayers":"onlinePlayers", "playerInfo":"playerInfo", "playerRankings", "playerRankings"}
+        self._mode = { 
+                              "onlinePlayers":"onlinePlayers",
+                              "playerInfo":"playerInfo", 
+                              "playerRankings":"playerRankings"
+                            }
         # 表現のフォーマット
         self._format = "json"
+        # 直近のリクエストURI
+        self.last_uri = ""
+        # 直近のレスポンス
+        self.res={}
 
-    def search(self, mode, **parameters):
+    def search(self, mode, parameters={}):
         # リクエストのクエリパラメータ
         request_query = parameters
         request_query["output"] = self._format
@@ -25,10 +32,10 @@ class Bf4StatsApiClient(object):
 
     def _search(self, mode,  query):
         # 辞書型のクエリパラメータを文字列に変換する
-        query_str = reduce(lambda s, (k, v): \
-                           "%s&%s=%s" % (s, k, v), query.iteritems(), "")
+        query_str = "&".join(['%s=%s' % (key, value) for key, value, in query.items()])
         # リクエストする URI を作る
-        request_uri = "%s%s?%s" % (self._endpoint, self._mode[mode], query_str[1:])
+        request_uri = "%s%s?%s" % (self._endpoint, self._mode[mode], query_str)
+        self.last_uri = request_uri
         return self._request(request_uri)
 
     def _request(self, uri):
@@ -40,9 +47,10 @@ class Bf4StatsApiClient(object):
 
     def _deserialize(self, content):
         # レスポンスの JSON を Python オブジェクトに変換する
-        return json.loads(content)
+        self.res = json.loads(content.decode('utf-8'))
+        return self.res
 
 if __name__ == '__main__':
     client = Bf4StatsApiClient()
-    response_entity = client.search(sys.argv[1], sys.argv[2])
-    print response_entity
+    response_entity = client.search(mode="onlinePlayers")
+    pprint(response_entity)
