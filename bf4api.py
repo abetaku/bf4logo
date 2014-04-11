@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 
 #import sys
@@ -11,6 +12,8 @@ class Bf4StatsApiClient(object):
     def __init__(self):
         # REST API のエンドポイント
         self._endpoint = "http://api.bf4stats.com/api/"
+        # 初期化用のエンドポイント
+        self._init = "http://bf4stats.com/"
         # モード
         self._mode = { 
                               "onlinePlayers":"onlinePlayers",
@@ -36,12 +39,22 @@ class Bf4StatsApiClient(object):
         # リクエストする URI を作る
         request_uri = "%s%s?%s" % (self._endpoint, self._mode[mode], query_str)
         self.last_uri = request_uri
-        return self._request(request_uri)
+        # BF4STATSの初期化用　URI
+        if 'plat' in query and 'name' in query:
+            init_uri = "%s%s/%s" % (self._init, query['plat'], query['name'])
+            pass
+        else :
+            init_uri = ""
+            pass
+        return self._request(request_uri, init_uri)
 
-    def _request(self, uri):
+    def _request(self, uri, init):
         # HTTP クライアントを得る
         http_client = httplib2.Http(".cache")
         # REST API を呼び出す
+        if init != "" :
+            r, c = http_client.request(init, "GET") # データ初期化
+            pass
         resp, content = http_client.request(uri, "GET")
         return self._deserialize(content)
 
@@ -49,6 +62,7 @@ class Bf4StatsApiClient(object):
         # レスポンスの JSON を Python オブジェクトに変換する
         self.res = json.loads(content.decode('utf-8'))
         return self.res
+
 
 if __name__ == '__main__':
     client = Bf4StatsApiClient()
