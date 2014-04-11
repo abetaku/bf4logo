@@ -44,7 +44,7 @@ class Bf4StatsApiClient(object):
             init_uri = "%s%s/%s" % (self._init, query['plat'], query['name'])
             pass
         else :
-            init_uri = ""
+            init_uri = None
             pass
         return self._request(request_uri, init_uri)
 
@@ -52,7 +52,7 @@ class Bf4StatsApiClient(object):
         # HTTP クライアントを得る
         http_client = httplib2.Http(".cache")
         # REST API を呼び出す
-        if init != "" :
+        if init is not None :
             r, c = http_client.request(init, "GET") # データ初期化
             pass
         resp, content = http_client.request(uri, "GET")

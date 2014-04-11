@@ -19,6 +19,7 @@ class myStats(Bf4StatsApiClient):
         self.statsData['RankImagePath'] = self._getRankImagePath()
         self.statsData['RankName'] = self._getRankName()
         self.statsData['Kills'] = self._getKills()
+        self.statsData['PlayerName'] = self._getPlayerName()
         return self.statsData
         
     def _getTimePlayed(self):
@@ -50,6 +51,10 @@ class myStats(Bf4StatsApiClient):
     def _getKills(self):
         kills = self.res['stats']['kills']
         return int(kills)
+
+    def _getPlayerName(self):
+        name = self.res['player']['name']
+        return name
 
 
 if __name__ == '__main__':
