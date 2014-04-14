@@ -31,7 +31,7 @@ class myStats(Bf4StatsApiClient):
         pt = ( (int(td.days)*24+int(td.seconds//3600)),
                  (td.seconds//60)%60,
                  (td.seconds%60) )
-        return "%sh %sm %ss" % pt
+        return "%s h %s m %s s" % pt
 
     def _getSPM(self):
         spm_value = self.res['stats']['extra']['spm']
